@@ -2,6 +2,7 @@ import json
 import boto3
 import random
 import os
+from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
 events = boto3.client('events')
@@ -21,11 +22,12 @@ def lambda_handler(event, context):
     try:
         table.update_item(
             Key={'id': order_id},
-            UpdateExpression="SET #s = :status, driver = :d",
+            UpdateExpression="SET #s = :status, driver = :d, updatedAt = :now",
             ExpressionAttributeNames={'#s': 'status'},
             ExpressionAttributeValues={
                 ':status': 'DELIVERING',
-                ':d': driver_asignado
+                ':d': driver_asignado,
+                ':now': datetime.now().isoformat()
             }
         )
         print(f"Orden {order_id} actualizada a DELIVERING en DynamoDB con driver {driver_asignado}")
@@ -38,7 +40,7 @@ def lambda_handler(event, context):
     try:
         events.put_events(
             Entries=[{
-                'Source': 'kfc.workflow.delivery',
+                'Source': 'kfc.orders',
                 'DetailType': 'ORDER.READY',
                 'EventBusName': event_bus,
                 'Detail': json.dumps({

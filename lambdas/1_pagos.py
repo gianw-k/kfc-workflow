@@ -2,6 +2,7 @@ import json
 import boto3
 import time
 import os
+from datetime import datetime
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource('dynamodb')
@@ -28,9 +29,13 @@ def lambda_handler(event, context):
     try:
         table.update_item(
             Key={'id': order_id},
-            UpdateExpression="SET #s = :status, paymentId = :pid",
+            UpdateExpression="SET #s = :status, paymentId = :pid, updatedAt = :now",
             ExpressionAttributeNames={'#s': 'status'},
-            ExpressionAttributeValues={':status': 'PAID', ':pid': payment_id},
+            ExpressionAttributeValues={
+                ':status': 'PAID',
+                ':pid': payment_id,
+                ':now': datetime.now().isoformat()
+            },
             ConditionExpression='attribute_exists(id)'  # La orden debe existir
         )
         print(f"Orden {order_id} actualizada a PAID en DynamoDB")
@@ -50,7 +55,7 @@ def lambda_handler(event, context):
     try:
         events.put_events(
             Entries=[{
-                'Source': 'kfc.workflow.pagos',
+                'Source': 'kfc.orders',
                 'DetailType': 'ORDER.PAID',
                 'EventBusName': event_bus,
                 'Detail': json.dumps({

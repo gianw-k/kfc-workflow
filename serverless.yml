@@ -15,22 +15,22 @@ provider:
 
 functions:
   pagos:
-    handler: functions/1_pagos.lambda_handler
+    handler: lambdas/1_pagos.lambda_handler
     name: kfc-workflow-pagos
     description: Procesa pago simulado
 
   cocina:
-    handler: functions/2_cocina.lambda_handler
+    handler: lambdas/2_cocina.lambda_handler
     name: kfc-workflow-cocina
     description: Cocina el pedido
 
   empaque:
-    handler: functions/3_empaque.lambda_handler
+    handler: lambdas/3_empaque.lambda_handler
     name: kfc-workflow-empaque
     description: Empaqueta el pedido
 
   delivery:
-    handler: functions/4_delivery.lambda_handler
+    handler: lambdas/4_delivery.lambda_handler
     name: kfc-workflow-delivery
     description: Asigna motorizado
 
