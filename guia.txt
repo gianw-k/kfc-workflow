@@ -1,0 +1,19 @@
+npm install -g serverless
+
+plugin:
+
+npm init -y
+
+npm install serverless-step-functions --save-dev
+
+Deployar:    
+serverless deploy
+
+Probar workflow:
+serverless invoke stepf --name KfcOrderFlow --data file://events/pedido_test.json
+
+Estructura del flujo:
+Input → Pagos → Verificación → Cocina → Empaque → Delivery → Output
+
+Estados del pedido en DynamoDB:
+PENDING → PAID → KITCHEN_READY → PACKED → DELIVERING

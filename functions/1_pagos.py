@@ -2,13 +2,16 @@ import json
 import boto3
 import time
 
-# Inicializamos DynamoDB fuera del handler para reusar conexión
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('PedidosKFC')
 
 def lambda_handler(event, context):
-    print(f"--- INICIO PAGOS --- ID: {event['id']}")
+    print(f"--- INICIO PAGOS --- ID: {event.get('id')}")
     
+    # Validamos que llegue el ID
+    if 'id' not in event:
+        raise ValueError("Falta el ID del pedido")
+
     # 1. Simular validación de pago
     time.sleep(2)
     payment_id = "TXN-STRIPE-OK"
@@ -21,7 +24,7 @@ def lambda_handler(event, context):
         ExpressionAttributeValues={':status': 'PAID', ':pid': payment_id}
     )
     
-    # 3. Retornar datos actualizados al Step Function
+    # 3. Retornar datos
     event['status'] = 'PAID'
     event['paymentId'] = payment_id
     return event

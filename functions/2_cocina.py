@@ -6,9 +6,8 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('PedidosKFC')
 
 def lambda_handler(event, context):
-    print(f"--- INICIO COCINA --- ID: {event['id']}")
+    print(f"--- INICIO COCINA --- ID: {event.get('id')}")
     
-    # Simular tiempo de cocina
     time.sleep(3)
     
     table.update_item(
