@@ -10,7 +10,8 @@ provider:
   iam:
     role: arn:aws:iam::${aws:accountId}:role/LabRole
   environment:
-    TABLE_NAME: PedidosKFC
+    TABLE_NAME: Orders
+    EVENT_BUS: orders-bus
 
 functions:
   pagos:
@@ -81,20 +82,8 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [delivery, Arn]
             End: true
-# Para test de la tabla
-resources:
-  Resources:
-    PedidosTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: PedidosKFC
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
+# Nota: La tabla Orders y EventBridge orders-bus se crean en kfc-integraciones
+# Este workflow usa los mismos recursos para mantener consistencia
 
 plugins:
   - serverless-step-functions
