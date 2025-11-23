@@ -34,7 +34,7 @@ def test_workflow():
     
     execution_arn = response['executionArn']
     print(f"Ejecución iniciada: {execution_name}")
-    print(f"🔗 ARN: {execution_arn}")
+    print(f"ARN: {execution_arn}")
     print("-" * 50)
     
     # Monitorear ejecución
@@ -46,7 +46,7 @@ def test_workflow():
         print(f"Estado: {current_status}", end='\r')
         
         if current_status in ['SUCCEEDED', 'FAILED', 'TIMED_OUT', 'ABORTED']:
-            print(f"\n\n🏁 Ejecución finalizada: {current_status}")
+            print(f"\n\nEjecución finalizada: {current_status}")
             
             if current_status == 'SUCCEEDED':
                 output = json.loads(status['output'])
@@ -58,11 +58,13 @@ def test_workflow():
                 print("RESUMEN DEL PEDIDO:")
                 print("=" * 50)
                 print(f"ID: {output.get('id')}")
-                print(f"Pago: {output.get('paymentId')}")
-                print(f"Estado Cocina: {output.get('status')}")
-                print(f"Empaquetado: {'✓' if output.get('status') == 'PACKED' or output.get('status') == 'IN_DELIVERY' else '✗'}")
-                print(f"Delivery: {output.get('driver', 'Sin asignar')}")
-                print(f"Tiempo estimado: {output.get('estimatedTime', 'N/A')}")
+                print(f"Tienda: {output.get('store')}")
+                print(f"Cliente: {output.get('client')}")
+                print(f"Total: S/{output.get('total')}")
+                print(f"Estado Final: {output.get('status')}")
+                print(f"Pago ID: {output.get('paymentId')}")
+                print(f"Motorizado: {output.get('driver', 'Sin asignar')}")
+                print(f"Dirección: {output.get('address')}")
                 
             elif current_status == 'FAILED':
                 print("\nEJECUCIÓN FALLIDA:")
