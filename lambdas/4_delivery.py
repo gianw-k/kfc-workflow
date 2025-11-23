@@ -35,8 +35,7 @@ def lambda_handler(event, context):
         print(f"Error actualizando DynamoDB: {str(e)}")
         raise
     
-    # 2. Enviar evento ORDER.READY a EventBridge (según diagrama: "Pedido Listo")
-    # Este evento indica que el pedido está listo para ser entregado
+    # 2. Enviar evento ORDER.READY a EventBridge "Pedido Listo"
     try:
         events.put_events(
             Entries=[{

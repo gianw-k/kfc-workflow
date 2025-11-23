@@ -19,13 +19,11 @@ def lambda_handler(event, context):
 
     order_id = event['id']
     
-    # 1. Validar pago con Stripe (simulado pero siguiendo el flujo de integraciones)
-    # En producción, aquí se haría la llamada real a Stripe
+    # 1. Validar pago con Stripe
     time.sleep(2)  # Simular latencia de Stripe
     payment_id = f"PAY-STRIPE-{int(time.time())}"
     
     # 2. Actualizar DynamoDB con el estado PAID
-    # La orden DEBE existir (creada por el backend)
     try:
         table.update_item(
             Key={'id': order_id},
@@ -51,7 +49,7 @@ def lambda_handler(event, context):
         print(f"Error actualizando DynamoDB: {str(e)}")
         raise
     
-    # 3. Enviar evento ORDER.PAID a EventBridge (como en stripe_payment.py)
+    # 3. Enviar evento ORDER.PAID a EventBridge
     try:
         events.put_events(
             Entries=[{
@@ -67,7 +65,6 @@ def lambda_handler(event, context):
         print(f"Evento ORDER.PAID enviado a EventBridge para orden {order_id}")
     except Exception as e:
         print(f"Advertencia: No se pudo enviar evento a EventBridge: {str(e)}")
-        # Continuamos porque el pago ya se procesó
     
     # 4. Retornar datos para el siguiente paso del workflow
     event['status'] = 'PAID'
