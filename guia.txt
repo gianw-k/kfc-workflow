@@ -12,7 +12,7 @@ serverless deploy
 IMPORTANTE: Desplegar primero kfc-integraciones para crear la tabla Orders y EventBridge orders-bus
 
 Probar workflow:
-serverless invoke stepf --name KfcOrderFlow --data file://events/pedido_test.json
+sls invoke stepf --name KfcOrderFlow --data "$(cat pedido_test.json)"
 
 Estructura del flujo:
 Input → Pagos (Stripe + EventBridge) → Verificación → Cocina → Empaque → Delivery (EventBridge) → Output

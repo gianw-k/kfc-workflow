@@ -1,0 +1,14 @@
+{
+  "id": "ORD-REJECTED",
+  "store": "KFC-MIRAFLORES",
+  "client": "Cliente Sin Fondos",
+  "address": "Av. Larco 100, Miraflores",
+  "total": 999.99,
+  "status": "PENDING",
+  "paymentId": null,
+  "driver": null,
+  "items": [
+    "10x Mega Bucket",
+    "20x Nuggets"
+  ]
+}

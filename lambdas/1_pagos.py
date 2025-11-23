@@ -19,8 +19,34 @@ def lambda_handler(event, context):
 
     order_id = event['id']
     
-    # 1. Validar pago con Stripe
+    # 1. Validar pago con Stripe (simulación)
     time.sleep(2)  # Simular latencia de Stripe
+    
+    # Simular rechazo de pago si el total es mayor a 500 o si el ID contiene "REJECTED"
+    total = event.get('total', 0)
+    if total > 500 or 'REJECTED' in order_id:
+        print(f"Pago RECHAZADO para orden {order_id} (Total: {total})")
+        # Actualizar estado a REJECTED
+        try:
+            table.update_item(
+                Key={'id': order_id},
+                UpdateExpression="SET #s = :status, updatedAt = :now",
+                ExpressionAttributeNames={'#s': 'status'},
+                ExpressionAttributeValues={
+                    ':status': 'PAYMENT_REJECTED',
+                    ':now': datetime.now().isoformat()
+                },
+                ConditionExpression='attribute_exists(id)'
+            )
+            print(f"Orden {order_id} actualizada a PAYMENT_REJECTED en DynamoDB")
+        except Exception as e:
+            print(f"Error actualizando DynamoDB: {str(e)}")
+        
+        # Retornar estado rechazado para que el workflow lo maneje
+        event['status'] = 'PAYMENT_REJECTED'
+        event['paymentId'] = None
+        return event
+    
     payment_id = f"PAY-STRIPE-{int(time.time())}"
     
     # 2. Actualizar DynamoDB con el estado PAID
